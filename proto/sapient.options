@@ -1,0 +1,80 @@
+# nanopb options for SAPIENT / BSI Flex 335 v2.0
+#
+# Goal: static allocation (no malloc) for the messages an edge node
+# actually sends and receives at runtime (StatusReport, DetectionReport,
+# Alert, Task, TaskAck, RegistrationAck, Error), small enough for an ESP32.
+#
+# Registration is large and only sent once at start-up. Its top-level
+# repeated fields are encoded via callbacks (see src/sapient_registration.c),
+# so the SapientMessage union stays small.
+#
+# Adjust the limits here and re-run tools/generate.sh if your node needs more.
+
+# ---- defaults -------------------------------------------------------------
+sapient_msg.bsi_flex_335_v2_0.*                    max_size:48 max_count:4
+
+# IDs: UUID = 36 chars + NUL, ULID = 26 chars + NUL
+*.node_id                                           max_size:37
+*.destination_id                                    max_size:37
+
+# Free-text fields
+sapient_msg.bsi_flex_335_v2_0.SapientMessage.additional_information  max_size:128
+sapient_msg.bsi_flex_335_v2_0.Alert.description                     max_size:128
+sapient_msg.bsi_flex_335_v2_0.Alert.additional_information          max_size:128
+sapient_msg.bsi_flex_335_v2_0.AssociatedFile.url                    max_size:128
+sapient_msg.bsi_flex_335_v2_0.Error.packet                          max_size:256
+sapient_msg.bsi_flex_335_v2_0.Error.error_message                   max_size:96 max_count:4
+sapient_msg.bsi_flex_335_v2_0.RegistrationAck.ack_response_reason   max_size:96 max_count:4
+sapient_msg.bsi_flex_335_v2_0.TaskAck.reason                        max_size:96 max_count:4
+sapient_msg.bsi_flex_335_v2_0.AlertAck.reason                       max_size:96 max_count:4
+
+# Polygons (LocationList) and region lists
+sapient_msg.bsi_flex_335_v2_0.LocationList.locations                max_count:8
+sapient_msg.bsi_flex_335_v2_0.StatusReport.obscuration              max_count:1
+sapient_msg.bsi_flex_335_v2_0.StatusReport.coverage                 max_count:1
+sapient_msg.bsi_flex_335_v2_0.StatusReport.status                   max_count:4
+sapient_msg.bsi_flex_335_v2_0.Task.region                           max_count:2
+sapient_msg.bsi_flex_335_v2_0.Location.utm_zone                     max_size:8
+
+# DetectionReport: a few classes / track fields per report
+sapient_msg.bsi_flex_335_v2_0.DetectionReport.classification        max_count:4
+sapient_msg.bsi_flex_335_v2_0.DetectionReport.associated_file       max_count:1
+sapient_msg.bsi_flex_335_v2_0.DetectionReport.associated_detection  max_count:2
+sapient_msg.bsi_flex_335_v2_0.DetectionReport.derived_detection     max_count:2
+sapient_msg.bsi_flex_335_v2_0.DetectionReport.signal                max_count:2
+
+# ---- recursive fields: must be callbacks ----------------------------------
+sapient_msg.bsi_flex_335_v2_0.DetectionReport.SubClass.sub_class    type:FT_CALLBACK
+sapient_msg.bsi_flex_335_v2_0.DetectionReport.DetectionReportClassification.sub_class max_count:2
+sapient_msg.bsi_flex_335_v2_0.Task.SubClassFilter.sub_class_filter  type:FT_CALLBACK
+sapient_msg.bsi_flex_335_v2_0.Task.ClassFilter.sub_class_filter     type:FT_CALLBACK
+sapient_msg.bsi_flex_335_v2_0.Registration.SubClass.sub_class       type:FT_CALLBACK
+sapient_msg.bsi_flex_335_v2_0.Registration.SubClassFilterDefinition.sub_class_definition type:FT_CALLBACK
+sapient_msg.bsi_flex_335_v2_0.Registration.ConfigurationData.sub_components type:FT_CALLBACK
+
+# ---- Registration: top-level lists via callbacks -----------------------------
+sapient_msg.bsi_flex_335_v2_0.Registration.node_definition   type:FT_CALLBACK
+sapient_msg.bsi_flex_335_v2_0.Registration.capabilities      type:FT_CALLBACK
+sapient_msg.bsi_flex_335_v2_0.Registration.status_definition type:FT_CALLBACK
+sapient_msg.bsi_flex_335_v2_0.Registration.mode_definition   type:FT_CALLBACK
+sapient_msg.bsi_flex_335_v2_0.Registration.dependent_nodes   type:FT_CALLBACK
+sapient_msg.bsi_flex_335_v2_0.Registration.reporting_region  type:FT_CALLBACK
+sapient_msg.bsi_flex_335_v2_0.Registration.config_data       type:FT_CALLBACK
+
+# Registration sub-messages are encoded one at a time, keep them modest
+sapient_msg.bsi_flex_335_v2_0.Registration.StatusDefinition.status_report        max_count:8
+sapient_msg.bsi_flex_335_v2_0.Registration.ModeDefinition.detection_definition   max_count:1
+sapient_msg.bsi_flex_335_v2_0.Registration.ModeDefinition.mode_parameter         max_count:2
+sapient_msg.bsi_flex_335_v2_0.Registration.DetectionDefinition.detection_report  max_count:4
+sapient_msg.bsi_flex_335_v2_0.Registration.DetectionDefinition.detection_class_definition max_count:1
+sapient_msg.bsi_flex_335_v2_0.Registration.DetectionDefinition.behaviour_definition max_count:2
+sapient_msg.bsi_flex_335_v2_0.Registration.DetectionDefinition.detection_performance max_count:2
+sapient_msg.bsi_flex_335_v2_0.Registration.DetectionClassDefinition.class_definition max_count:8
+sapient_msg.bsi_flex_335_v2_0.Registration.DetectionClassDefinition.class_performance max_count:2
+sapient_msg.bsi_flex_335_v2_0.Registration.DetectionClassDefinition.taxonomy_dock_definition type:FT_CALLBACK
+sapient_msg.bsi_flex_335_v2_0.Registration.ClassDefinition.sub_class             type:FT_CALLBACK
+sapient_msg.bsi_flex_335_v2_0.Registration.TaskDefinition.command                max_count:4
+sapient_msg.bsi_flex_335_v2_0.Registration.RegionDefinition.region_type          max_count:3
+sapient_msg.bsi_flex_335_v2_0.Registration.RegionDefinition.region_area          max_count:1
+sapient_msg.bsi_flex_335_v2_0.Registration.RegionDefinition.class_filter_definition type:FT_CALLBACK
+sapient_msg.bsi_flex_335_v2_0.Registration.RegionDefinition.behaviour_filter_definition type:FT_CALLBACK

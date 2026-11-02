@@ -1,0 +1,49 @@
+menu "SAPIENT sensor node"
+
+    config SAPIENT_FUSION_HOST
+        string "Fusion node / middleware host"
+        default "192.168.1.10"
+        help
+            Hostname or IP of the SAPIENT fusion node (DMM) or middleware.
+            For testing run tools/fusion_stub.py on your PC.
+
+    config SAPIENT_FUSION_PORT
+        int "Fusion node TCP port"
+        default 12000
+        help
+            Must match the port your fusion node listens on
+            (tools/fusion_stub.py uses 12000 by default).
+
+    config SAPIENT_SNTP_SERVER
+        string "SNTP server"
+        default "pool.ntp.org"
+
+    config SAPIENT_NODE_NAME
+        string "Node name"
+        default "DTU acoustic node"
+
+    config SAPIENT_NODE_SHORT_NAME
+        string "Node short name"
+        default "ACU-1"
+
+    config SAPIENT_STATUS_INTERVAL_S
+        int "StatusReport (heartbeat) interval in seconds"
+        default 10
+
+    config SAPIENT_NODE_LAT_E6
+        int "Node latitude x 1e6 (degrees)"
+        default 48800000
+
+    config SAPIENT_NODE_LON_E6
+        int "Node longitude x 1e6 (degrees)"
+        default 9010000
+
+    config SAPIENT_NODE_ALT_M
+        int "Node altitude (m above geoid / MSL)"
+        default 400
+
+    config SAPIENT_SIMULATE_DETECTIONS
+        bool "Send simulated detections every 5 s"
+        default y
+
+endmenu

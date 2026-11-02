@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  host-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install Python deps
+        run: |
+          pip install protobuf
+          python3 -m venv test/host/.venv
+          test/host/.venv/bin/pip install sapient-pydantic
+      - name: Host tests (selftest, C<->Python interop, ICD validation)
+        run: ./test/host/run.sh
+
+  generated-up-to-date:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install nanopb==0.4.9.1 grpcio-tools
+      - run: ./tools/generate.sh
+      - name: Check generated code matches proto/ + options
+        run: git diff --exit-code -- generated
+
+  esp-idf-build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target: [esp32, esp32s3]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: espressif/esp-idf-ci-action@v1
+        with:
+          esp_idf_version: v5.3.2
+          target: ${{ matrix.target }}
+          path: examples/sensor_node

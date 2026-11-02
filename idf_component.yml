@@ -1,0 +1,12 @@
+version: "0.1.0"
+description: "SAPIENT (BSI Flex 335 v2.0) messages, framing and helpers for ESP32 edge nodes (nanopb based)"
+url: "https://github.com/DerSold1/sapient-esp-idf"
+license: "Apache-2.0"
+tags:
+  - sapient
+  - bsi-flex-335
+  - counter-uas
+  - protobuf
+  - nanopb
+dependencies:
+  idf: ">=5.1"

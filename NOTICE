@@ -1,0 +1,16 @@
+sapient-esp-idf
+Copyright 2026 Markus Soldner and contributors
+
+This product includes:
+
+* SAPIENT / BSI Flex 335 protobuf definitions (proto/sapient_msg/)
+  Dstl (c) Crown Copyright 2023-2024, Apache License 2.0
+  https://github.com/dstl/SAPIENT-Proto-Files
+  BSI Flex 335 (c) The British Standards Institution.
+  Files in generated/ and tools/sapient_pb/ are derived from these definitions.
+
+* nanopb runtime (third_party/nanopb/)
+  Copyright (c) 2011 Petteri Aimonen, zlib licence (see third_party/nanopb/LICENSE.txt)
+  https://github.com/nanopb/nanopb
+
+This project is not affiliated with or endorsed by Dstl, the UK MOD or BSI.
