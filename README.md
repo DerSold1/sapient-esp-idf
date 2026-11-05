@@ -7,8 +7,7 @@ autonomous sensor nodes to fusion nodes, used for counter-UAS among other things
 bindings already exist. This repo adds what was missing for **cheap embedded sensor nodes**: a
 ready-to-use ESP-IDF component that lets an ESP32 talk SAPIENT without writing protobuf plumbing yourself.
 
-> Built for the [Defense Tech for Ukraine](https://defensetechforukraine.org) community, so that a new
-> sensor node only has to implement *detection*. The interface is already done.
+
 
 ## What's in it
 
